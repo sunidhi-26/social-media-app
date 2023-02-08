@@ -40,15 +40,16 @@ router.post("/login",async (req,res)=>{
         // findOne() because there should be only one user with a particular email
         const user = await User.findOne({email:req.body.email});
         // if the user email is not found then we send its status as 404
-        !user && res.status(404).json("user not found");
+        if(!user) 
+            return res.status(404).json("user not found");
 
         const validPassword = await bcrypt.compare(req.body.password, user.password);
-        !validPassword && res.status(400).json("wrong password");
+        if(!validPassword)
+            return res.status(400).json("wrong password");
 
-        res.status(200).json(user);
-
+        return res.status(200).json(user);
     } catch(err) {
-       res.status(500).json(err);
+       return res.status(500).json(err);
     }
     
 })

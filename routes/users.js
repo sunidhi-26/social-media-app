@@ -17,7 +17,7 @@ router.put("/:id", async(req,res)=>{
             const user = await User.findByIdAndUpdate(req.params.id, {
                 $set:req.body, // This is automatically set the body after update
             });
-            res.status(200).json("Your account has been updated!")
+            return res.status(200).json("Your account has been updated!")
         } catch(err) {
             return res.status(500).json(err);
         }
