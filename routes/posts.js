@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
+const checkAuth = require("../middleware/auth-middleware.js");
 
 // create a post
-router.post("/", async (req,res)=>{
+router.post("/",checkAuth, async (req,res)=>{
     const newPost = new Post(req.body);
     try {
         const savedPost = await newPost.save();
@@ -13,7 +14,7 @@ router.post("/", async (req,res)=>{
 });
 
 // update a post
-router.put("/:id", async (req,res)=>{
+router.put("/:id",checkAuth, async (req,res)=>{
     try {
         const post = await Post.findById(req.params.id);
         if (post.userId === req.body.userId) {
@@ -28,7 +29,7 @@ router.put("/:id", async (req,res)=>{
 });
 
 // delete a post
-router.delete("/:id", async (req,res)=>{
+router.delete("/:id",checkAuth, async (req,res)=>{
     try {
         const post = await Post.findById(req.params.id);
         if (post.userId === req.body.userId) {
@@ -43,7 +44,7 @@ router.delete("/:id", async (req,res)=>{
 });
 
 // like/dislike a post
-router.put("/:id/like", async(req,res)=>{
+router.put("/:id/like",checkAuth, async(req,res)=>{
     try {
         const post = await Post.findById(req.params.id);
         if (!post.likes.includes(req.body.userId)) {
@@ -59,7 +60,7 @@ router.put("/:id/like", async(req,res)=>{
 });
 
 // get a post
-router.get("/:id", async (req,res)=>{
+router.get("/:id",checkAuth, async (req,res)=>{
     try {
         const post = await Post.findById(req.params.id);
         res.status(200).json(post);

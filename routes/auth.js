@@ -16,6 +16,11 @@ router.post("/register", async (req,res)=> {
             password: hashedPassword
         });
 
+        console.log("the success part " + newUser);
+
+        const token = await newUser.generateAuthToken();
+        console.log("the token part " + token);
+
         // save user and respond
         const user = await newUser.save();
         res.status(200).json(user);
@@ -44,6 +49,10 @@ router.post("/login",async (req,res)=>{
             return res.status(404).json("user not found");
 
         const validPassword = await bcrypt.compare(req.body.password, user.password);
+
+        const token = await user.generateAuthToken();
+        console.log("the token part " + token);
+
         if(!validPassword)
             return res.status(400).json("wrong password");
 

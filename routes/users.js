@@ -1,9 +1,11 @@
 const User = require("../models/User.js");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const checkAuth = require("../middleware/auth-middleware.js");
 
 // update user
-router.put("/:id", async(req,res)=>{
+router.put("/:id",checkAuth, async(req,res)=>{
+    console.log(req.userData);
     if(req.body.userId === req.params.id || req.body.isAdmin) {
         if(req.body.password) {
             try {
@@ -27,7 +29,7 @@ router.put("/:id", async(req,res)=>{
 });
 
 // delete user
-router.delete("/:id", async(req,res)=>{
+router.delete("/:id",checkAuth, async(req,res)=>{
     if(req.body.userId === req.params.id || req.body.isAdmin) {
         try {
             await User.findByIdAndDelete(req.params.id);
@@ -41,7 +43,7 @@ router.delete("/:id", async(req,res)=>{
 });
 
 // get a user
-router.get("/:id", async (req,res) => {
+router.get("/:id",checkAuth, async (req,res) => {
     try {
         const user = await User.findById(req.params.id);
         const {password,updatedAt, ...other} = user._doc  // This allow us to not get password,updatedAt information when we send a request to get an user
@@ -72,7 +74,7 @@ router.get("/:id/following", async(req,res)=>{
 });
 
 // follow a user
-router.put("/:id/follow", async (req,res)=>{
+router.put("/:id/follow",checkAuth, async (req,res)=>{
     if (req.body.userId !== req.params.id) {
         try {
             const user = await User.findById(req.params.id);
@@ -93,7 +95,7 @@ router.put("/:id/follow", async (req,res)=>{
 })
 
 // unfollow a user
-router.put("/:id/unfollow", async (req,res)=>{
+router.put("/:id/unfollow",checkAuth, async (req,res)=>{
     if (req.body.userId !== req.params.id) {
         try {
             const user = await User.findById(req.params.id);
